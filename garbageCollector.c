@@ -38,7 +38,6 @@ HeapBlock* getHeapBlockPtr(void** addr) {
   for (ptr = programPtrList->first; ptr; ptr = next) {
     next = ptr->next;
 
-    //if (*addr == *(ptr->varAddr)) {
     if (addr == (ptr->varAddr)) {
       debug("HeapBlock Ptr found in HeapBlockList", logging);
       /*if (ptr->heapBlock == 0x1) {
@@ -83,7 +82,6 @@ HeapBlock* setParent(void **addr) {
  */
 void gcReg(void** addr, HeapBlock* heapBlock, void** heapParentAddr, int isAlloc) {
   ProgramPtr* ptr;
-  //ProgramPtr* next;
 
   debug("gcReg", logging);
 
@@ -94,7 +92,6 @@ void gcReg(void** addr, HeapBlock* heapBlock, void** heapParentAddr, int isAlloc
     // check to see if addr of ptr already exists
     // within programPtrList
     for (ptr = programPtrList->first; ptr != NULL; ptr = ptr->next) {
-      //next = ptr->next;
 
       if (addr == ptr->varAddr) {
         debug("Found Ptr in ProgramPtrList", logging);
@@ -121,13 +118,10 @@ void gcReg(void** addr, HeapBlock* heapBlock, void** heapParentAddr, int isAlloc
   throwError("NULL heapBlock from gcAlloc!  This should not happen.", logging);
       }
     } else {
-      // b = NULL
       if (*(ptr->varAddr) == NULL) { // TODO: make sure this line is correct.
         logWarning("var is set to null", logging);
         ptr->heapBlock = NULL;
       } else {
-        // b = a;
-        // ptr->varAddr = addr;
         if (heapBlock == NULL) {
           ptr->heapBlock = getHeapBlockPtr(addr);
         } else {
@@ -187,7 +181,6 @@ int isReachable(ProgramPtr* ptr) {
 void garbageCollect() {
   size_t a;
   ProgramPtr* progPtr = NULL;
-  //ProgramPtr* next;
   HeapBlock* hPtr = NULL;
   HeapBlock* heapNext = NULL;
 
@@ -195,7 +188,6 @@ void garbageCollect() {
   // Mark
   for (progPtr = programPtrList->first; progPtr != NULL; progPtr = progPtr->next) {
     debug("mark begin", logging);
-    //next = progPtr->next;
     if (progPtr->heapParent != NULL && progPtr->heapBlock != NULL) {
       // traverse parent HeapBlock to make sure
       // nothing is referencing it
@@ -262,8 +254,6 @@ void garbageCollect() {
       debug("shift", logging);
       //eliminating void* arithmetic and other warnings.
       long t1 = (char*)freeBlockHeapPtr-(((char*)hPtr->heapPtr) + hPtr->size); 
-      //printf("$$$$ t1 = %d\n", t1);
-      //size_t shiftSize = freeBlockHeapPtr-((hPtr->heapPtr)+(hPtr->size));
       size_t shiftSize = (size_t)t1;
       size_t zero = 0;
       if (shiftSize > zero) {
@@ -302,7 +292,6 @@ void garbageCollect() {
         debug("About to enter while", logging);
         while (tmp) {
           if (tmp->heapPtr) {
-            //tmp->heapPtr -= hPtr->size;
             //pointer arithmetic on void* is undefined behavior.
             char* tmp2 = tmp->heapPtr;
             tmp2 -= hPtr->size;
@@ -319,17 +308,15 @@ void garbageCollect() {
 
         //  update all ProgramPtrs
         ProgramPtr* tmpPPtr;
-        //ProgramPtr* tmpNext;
 
         debug("update program ptrs", logging);
         //int index = 0;
         for (tmpPPtr = programPtrList->first; tmpPPtr != NULL; tmpPPtr = tmpPPtr->next) {
 
           if ((tmpPPtr->heapBlock) != NULL && (tmpPPtr->heapBlock->heapPtr) !=NULL ) {
-            //*(tmpPPtr->varAddr) = tmpPPtr->heapBlock->heapPtr;//Original version of statement.
             //FIXME: How do we make sure that tmpPPtr is valid so that we can access its member??
             if(&(tmpPPtr->varAddr) && tmpPPtr->varAddr) {
-              *(tmpPPtr->varAddr) = tmpPPtr->heapBlock->heapPtr;//TODO: This line is dangerous. 
+              *(tmpPPtr->varAddr) = tmpPPtr->heapBlock->heapPtr;//FIXME: This line is dangerous. 
             }
             else {
           throwError("Null varAddr!!!!", 1);
@@ -349,7 +336,6 @@ void garbageCollect() {
       debug("update space used and freeblockheapptr", logging);
       // update space used and freeblockheapptr
       spaceUsed -= hPtr->size;
-      //freeBlockHeapPtr -= hPtr->size;
       //pointer arithmetic on void* is undefined behavior.
       char* tmp1 = freeBlockHeapPtr;
       tmp1 -= hPtr->size;
@@ -399,10 +385,6 @@ void garbageCollect() {
         printf("HeapNext: %p\n", heapNext);
       }
 
-      //TODO: trying out ghetto fix for problemz.
-      //heapNext = hPtr->next;
-      
-
       free(hPtr);
     }
   }
@@ -444,7 +426,6 @@ void checkPrgPtrExist(void** addr) {
   //ProgramPtr* next;
 
   for (ptr = programPtrList->first; ptr != NULL; ptr = ptr->next) {
-    //next = ptr->next;
 
     if (addr == ptr->varAddr) {
       logWarning("Setting heap block to null", logging);
@@ -539,7 +520,6 @@ void* gcAlloc(size_t ptrSize, void** addr, void** heapParentAddr) {
     char* tmp = freeBlockHeapPtr;
     tmp += ptrSize;
     freeBlockHeapPtr = tmp;
-    //freeBlockHeapPtr += ptrSize;
     if (logging) {
       printf("Freeblockptr after inc: %p\n", freeBlockHeapPtr);
     }
