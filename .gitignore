@@ -1,0 +1,6 @@
+*.class
+*.out
+*.o
+extended-static-java-compiler/compiler-J2C-translator/*.c
+extended-static-java-compiler/compiler-J2C-translator/*.h
+gc
