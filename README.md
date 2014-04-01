@@ -4,7 +4,7 @@ A basic garbage collection program.
 
 ## Documentation
 
-Visit [docs](https://github.com/briancain/garbage-collection/docs) for more information
+Visit [docs](/docs) for more information
 
 ## Running the tests
 
